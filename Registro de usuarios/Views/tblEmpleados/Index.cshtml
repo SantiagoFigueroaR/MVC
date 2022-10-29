@@ -1,0 +1,134 @@
+﻿@model Registro_de_usuarios.Models.EmpleadoModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <link href="~/lib/datatables.net-bs4/dataTables.bootstrap4.min.css" rel="stylesheet" />
+}
+<h2>Registre al empleado </h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+
+<table id="datatable">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Apellidos
+            </th>
+            <th>
+                Puesto
+            </th>
+            <th>
+                Edad
+            </th>
+            <th>
+                Pais
+            </th>
+            <th>
+                Estado
+            </th>
+            <th>
+                Email
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Empleados)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apellido)
+            </td>
+            <td>
+                @{
+                    var puestoDesc = string.Empty;
+
+                    if (item.IdPuesto.HasValue)
+                    {
+                        var puestoEntity = Model.Puestos.FirstOrDefault(p => p.idPuesto == item.IdPuesto);
+
+                        if (puestoEntity != null)
+                        {
+                            puestoDesc = puestoEntity.Descripcion;
+                        }
+                    }
+                }
+
+                @Html.Raw(puestoDesc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Edad)
+            </td>
+
+            <td>
+                @{
+                    var paisDesc = string.Empty;
+                    if (item.IdPais.HasValue)
+                    {
+                        var paisEntity = Model.Paises.FirstOrDefault(o => o.idPais == item.IdPais);
+                        if (paisEntity != null)
+                        {
+                            paisDesc = paisEntity.Pais;
+                        }
+                    }
+
+                }
+
+                @Html.Raw(paisDesc)
+            </td>
+
+            <td>
+                @{ 
+                    var estadoDesc = string.Empty;
+                    if(item.IdEstado.HasValue)
+                    {
+                        var estadoEntity = Model.Estados.FirstOrDefault(q => q.idEstado == item.IdEstado);
+                        if(estadoEntity != null)
+                        {
+                            estadoDesc = estadoEntity.Estado;
+                        }
+                    }
+                }
+
+                @Html.Raw(estadoDesc)
+            </td>
+
+            <th>
+                @Html.DisplayFor(modelItem => item.Email)
+            </th>
+
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+
+    <script src="~/lib/datatables.net/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables.net-bs4/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#datatable').DataTable();
+        });
+    </script>
+}
