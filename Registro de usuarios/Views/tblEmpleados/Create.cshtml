@@ -54,7 +54,7 @@
     <div class="form-group">
         @Html.Label("Pais", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.DropDownListFor(model => model.IdPais, elementosPais, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.DropDownListFor(model => model.IdPais, elementosPais, new { htmlAttributes = new { @class = "form-control", id="PaisClass" } })
             @Html.ValidationMessageFor(model => model.IdPais, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -62,8 +62,8 @@
     <div class="form-group">
         @Html.Label("Estado",htmlAttributes: new { @class = "control-label col-md-2"})
         <div class="col-md-10">
-            @Html.DropDownListFor(model => model.IdEstado, elementosEstado, new { htmlAttributes = new { @class = " form.control" } })
-            @Html.ValidationMessageFor(model => model.IdEstado, "", new { @class = "text-danger"})
+            <select></select>
+          
         </div>
     </div>
 
@@ -86,3 +86,23 @@
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
+
+<script>
+
+    var cboPaisClass = document.getElementById("PaisClass");
+    cboPaisClass.addEventListener("change", Refresh);
+    Refresh();
+
+    function Refresh() {
+        fetch("@Url.Content("~/tblEmpleados/LoadCatalogoEstados")" + "?idPais= " + cboPaisClass.value)
+            .then(function (result) {
+                if (result.ok) {
+                    return result.json();
+                }
+            })
+            .then(function (data) {
+                console.log(data);
+            })
+
+    }
+</script>

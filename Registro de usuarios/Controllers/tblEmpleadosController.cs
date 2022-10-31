@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -55,7 +56,7 @@ namespace Registro_de_usuarios.Controllers
         {
             this.LoadCatalogoPuestos();
             this.LoadCatalogoPais();
-            this.LoadCatalogoEstados();
+            this.LoadCatalogoEstados(-1);
 
 
             return View();
@@ -87,7 +88,7 @@ namespace Registro_de_usuarios.Controllers
 
             this.LoadCatalogoPuestos();
             this.LoadCatalogoPais();
-            this.LoadCatalogoEstados();
+            this.LoadCatalogoEstados(-1);
 
             return View(tblEmpleados);
         }
@@ -107,7 +108,7 @@ namespace Registro_de_usuarios.Controllers
 
             this.LoadCatalogoPuestos();
             this.LoadCatalogoPais();
-            this.LoadCatalogoEstados();
+            this.LoadCatalogoEstados(-1);
 
             return View(tblEmpleados);
         }
@@ -129,7 +130,7 @@ namespace Registro_de_usuarios.Controllers
 
             this.LoadCatalogoPuestos();
             this.LoadCatalogoPais();
-            this.LoadCatalogoEstados();
+            this.LoadCatalogoEstados(-1);
 
             return View(tblEmpleados);
         }
@@ -187,18 +188,57 @@ namespace Registro_de_usuarios.Controllers
 
         }
 
-      
-         private void LoadCatalogoEstados()
+
+        /* private void LoadCatalogoEstados(int idPais)
+         {
+
+
+
+
+             List<SelectListItem> catalogoE = db.tblCatEstados.Where(o => o.IdPais == idPais)
+                 .Select(q => new SelectListItem
+                 {
+                     Value = q.idEstado.ToString(),
+                     Text = q.Estado
+                 }).ToList(); ;
+
+
+
+             SelectListItem catinicial = new SelectListItem();
+             catinicial.Value = "-1";
+             catinicial.Text = "--Seleccione Estado--";
+             catalogoE.Add(catinicial);
+
+
+
+
+             ViewBag.Estados = catalogoE.OrderBy(x => x.Value).ToArray();
+         }
+ */
+
+        [HttpGet]
+        public JsonResult LoadCatalogoEstados(int idPais)
         {
-            var catalogoE = db.tblCatEstados
-                                 .Select(q => new SelectListItem
-                                 {
-                                     Value = q.idEstado.ToString(),
-                                     Text = q.Estado
-                                 }).ToArray();
-            ViewBag.Estados = catalogoE;
+            List<ElementJsonIntKey> lst = new List<ElementJsonIntKey>();
+            using( EmpresaEntities db = new EmpresaEntities())
+            {
+                lst = (from d in db.tblCatEstados
+                       where d.IdPais == idPais
+                       select new ElementJsonIntKey
+                       {
+                           Value = idPais,
+                           Text = Estado
+
+                       }).ToList();
+            }
+            return Json(lst, JsonRequestBehavior.AllowGet);
         }
-        
+        public class ElementJsonIntKey
+        {
+            public int Value { get; set; }
+            public string Text { get; set;  }
+
+        }
 
         protected override void Dispose(bool disposing)
         {
