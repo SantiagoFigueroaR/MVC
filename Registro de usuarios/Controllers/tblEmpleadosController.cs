@@ -56,7 +56,7 @@ namespace Registro_de_usuarios.Controllers
         {
             this.LoadCatalogoPuestos();
             this.LoadCatalogoPais();
-            this.LoadCatalogoEstados(-1);
+            this.LoadCatalogoEstados();
 
 
             return View();
@@ -88,7 +88,7 @@ namespace Registro_de_usuarios.Controllers
 
             this.LoadCatalogoPuestos();
             this.LoadCatalogoPais();
-            this.LoadCatalogoEstados(-1);
+            this.LoadCatalogoEstados();
 
             return View(tblEmpleados);
         }
@@ -108,7 +108,7 @@ namespace Registro_de_usuarios.Controllers
 
             this.LoadCatalogoPuestos();
             this.LoadCatalogoPais();
-            this.LoadCatalogoEstados(-1);
+            this.LoadCatalogoEstados();
 
             return View(tblEmpleados);
         }
@@ -130,7 +130,7 @@ namespace Registro_de_usuarios.Controllers
 
             this.LoadCatalogoPuestos();
             this.LoadCatalogoPais();
-            this.LoadCatalogoEstados(-1);
+            this.LoadCatalogoEstados();
 
             return View(tblEmpleados);
         }
@@ -175,70 +175,43 @@ namespace Registro_de_usuarios.Controllers
             ViewBag.Puestos = catalogo;
         }
 
-        private void LoadCatalogoPais()
+        public ActionResult LoadCatalogoPais()
         {
-            var catalogoP = db.tblCatPaises
-                            .Select(o => new SelectListItem
-                            {
-                                Value = o.idPais.ToString(),
-                                Text = o.Pais
-                            }).ToArray();
+            List<SelectListItem> lst = new List<SelectListItem>();
 
-            ViewBag.Paises = catalogoP;
+            lst = (from d in db.tblCatPaises
+                   select new SelectListItem
+                   {
+                       Value = d.idPais.ToString(),
+                       Text = d.Pais
+                   }).ToList();
+
+            ViewBag.Paises = lst;
 
         }
 
-
-        /* private void LoadCatalogoEstados(int idPais)
-         {
-
-
-
-
-             List<SelectListItem> catalogoE = db.tblCatEstados.Where(o => o.IdPais == idPais)
-                 .Select(q => new SelectListItem
-                 {
-                     Value = q.idEstado.ToString(),
-                     Text = q.Estado
-                 }).ToList(); ;
-
-
-
-             SelectListItem catinicial = new SelectListItem();
-             catinicial.Value = "-1";
-             catinicial.Text = "--Seleccione Estado--";
-             catalogoE.Add(catinicial);
-
-
-
-
-             ViewBag.Estados = catalogoE.OrderBy(x => x.Value).ToArray();
-         }
- */
-
-        
-        public JsonResult LoadCatalogoEstados(int idPais)
+        public JsonResult LoadCatalogoEstados(int? IdPais)
         {
-            List<ElementJsonIntKey> lst = new List<ElementJsonIntKey>();
-            using( EmpresaEntities db = new EmpresaEntities())
-            {
-                lst = (from d in db.tblCatEstados
-                       where d.IdPais == idPais
-                       select new ElementJsonIntKey
-                       {
-                           Value = idPais,
-                           Text = Estado
+            List<ElementJsonKey> lstestados = new List<ElementJsonKey>();
 
-                       }).ToList();
-            }
-            return Json(lst, JsonRequestBehavior.AllowGet);
+            lstestados = (from d in db.tblCatEstados
+                          where d.IdPais == IdPais
+                          select new ElementJsonKey
+                          {
+                              Value = d.idEstado,
+                              Text = d.Estado
+                          }).ToList();
+            return Json(lstestados, JsonRequestBehavior.AllowGet);
+            // ViewBag.Estados = lstestados;
         }
-        public class ElementJsonIntKey
+
+
+        public class ElementJsonKey
         {
             public int Value { get; set; }
-            public string Text { get; set;  }
-
+            public string Text { get; set; }
         }
+
 
         protected override void Dispose(bool disposing)
         {
