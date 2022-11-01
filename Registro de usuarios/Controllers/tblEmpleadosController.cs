@@ -216,7 +216,7 @@ namespace Registro_de_usuarios.Controllers
          }
  */
 
-        [HttpGet]
+        
         public JsonResult LoadCatalogoEstados(int idPais)
         {
             List<ElementJsonIntKey> lst = new List<ElementJsonIntKey>();
