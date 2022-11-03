@@ -8,7 +8,7 @@ using Registro_de_usuarios.Models;
 
 namespace Registro_de_usuarios.Controllers
 
-{
+{//Conexion a Repos
     public class tblEmpleadosController : Controller
     {
         private EmpresaEntities db = new EmpresaEntities();
