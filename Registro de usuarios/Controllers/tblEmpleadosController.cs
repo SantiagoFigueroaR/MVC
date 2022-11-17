@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -174,31 +175,43 @@ namespace Registro_de_usuarios.Controllers
             ViewBag.Puestos = catalogo;
         }
 
-        private void LoadCatalogoPais()
+        public ActionResult LoadCatalogoPais()
         {
-            var catalogoP = db.tblCatPaises
-                            .Select(o => new SelectListItem
-                            {
-                                Value = o.idPais.ToString(),
-                                Text = o.Pais
-                            }).ToArray();
+            List<SelectListItem> lst = new List<SelectListItem>();
 
-            ViewBag.Paises = catalogoP;
+            lst = (from d in db.tblCatPaises
+                   select new SelectListItem
+                   {
+                       Value = d.idPais.ToString(),
+                       Text = d.Pais
+                   }).ToList();
+
+            ViewBag.Paises = lst;
 
         }
 
-      
-         private void LoadCatalogoEstados()
+        public JsonResult LoadCatalogoEstados(int? IdPais)
         {
-            var catalogoE = db.tblCatEstados
-                                 .Select(q => new SelectListItem
-                                 {
-                                     Value = q.idEstado.ToString(),
-                                     Text = q.Estado
-                                 }).ToArray();
-            ViewBag.Estados = catalogoE;
+            List<ElementJsonKey> lstestados = new List<ElementJsonKey>();
+
+            lstestados = (from d in db.tblCatEstados
+                          where d.IdPais == IdPais
+                          select new ElementJsonKey
+                          {
+                              Value = d.idEstado,
+                              Text = d.Estado
+                          }).ToList();
+            return Json(lstestados, JsonRequestBehavior.AllowGet);
+            // ViewBag.Estados = lstestados;
         }
-        
+
+
+        public class ElementJsonKey
+        {
+            public int Value { get; set; }
+            public string Text { get; set; }
+        }
+
 
         protected override void Dispose(bool disposing)
         {
